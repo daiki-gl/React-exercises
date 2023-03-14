@@ -1,5 +1,5 @@
 
-const Search = ({children, searchInfoList, fetchSearchTopStories, setSearchTopStories }) => {
+const Search = ({children, searchInfoList, fetchSearchTopStories }) => {
     const [searchInfo, setSearchInfo] = searchInfoList
     const {searchTerm} = searchInfo
     
@@ -8,7 +8,7 @@ const Search = ({children, searchInfoList, fetchSearchTopStories, setSearchTopSt
     }
     
     const onSearchSubmit = event => {
-        fetchSearchTopStories(searchTerm,setSearchTopStories, setSearchInfo)
+        fetchSearchTopStories(searchTerm)
         event.preventDefault()
     }
 

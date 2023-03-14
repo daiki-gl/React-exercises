@@ -3,7 +3,6 @@ import Button from './components/Button'
 import Search from './components/Search'
 import Table from './components/Table'
 
-
 const PATH_BASE = 'https://hn.algolia.com/api/v1'
 const PATH_SEARCH = '/search'
 const PARAM_SEARCH = 'query='
@@ -18,8 +17,6 @@ const Lab = () => {
            await fetchSearchTopStories(searchInfo.searchTerm)
         })()
     },[])
-
-
 
     const fetchSearchTopStories = async(searchTerm, page = 0) => {
         setIsLoading(false)
