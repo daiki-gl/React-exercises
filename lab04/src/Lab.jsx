@@ -1,75 +1,40 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import Button from './components/Button'
+import Search from './components/Search'
+import Table from './components/Table'
+
 
 const PATH_BASE = 'https://hn.algolia.com/api/v1'
 const PATH_SEARCH = '/search'
 const PARAM_SEARCH = 'query='
 const PARAM_PAGE = 'page='
 
-const Search = ({ value, onChange, onSubmit, children }) => {
-    return (
-        <form onSubmit={onSubmit}>
-            <input type="text" value={value} onChange={onChange} />
-            <button type="submit">{children}</button>
-        </form>
-    )
-}
-
-const Table = ({ list, onDismiss }) =>
-    <div className="table">
-        {list.map(item =>
-            <div key={item.objectID} className="table-row">
-                <span style={{ width: '40%' }}>
-                    <a href={item.url}>{item.title}</a>
-                </span>
-                <span style={{ width: '30%' }}>
-                    {item.author}
-                </span>
-                <span style={{ width: '10%' }}>
-                    {item.num_comments}
-                </span>
-                <span style={{ width: '10%' }}>
-                    {item.points}
-                </span>
-                <span style={{ width: '10%' }}>
-                    <Button
-                        onClick={() => onDismiss(item.objectID)}
-                        className="button-inline"
-                    >
-                        Dismiss
-                    </Button>
-                </span>
-            </div>
-        )}
-    </div>
-
-const Button = ({ onClick, className = '', children }) =>
-    <button
-        onClick={onClick}
-        className={className}
-        type="button"
-    >
-        {children}
-    </button>
-
 const Lab = () => {
     const [searchInfo, setSearchInfo] = useState({result: null, searchTerm: 'React'})
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
-        fetchSearchTopStories(searchInfo.searchTerm)
+       (async () => {
+           await fetchSearchTopStories(searchInfo.searchTerm)
+        })()
     },[])
 
-    const fetchSearchTopStories = (searchTerm, page = 0) => {
-        fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`)
-            .then(response => response.json())
-            .then(result => setSearchTopStories(result))
+
+
+    const fetchSearchTopStories = async(searchTerm, page = 0) => {
+        setIsLoading(false)
+       await fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`)
+            .then(async(response) => await response.json())
+            .then(async result => {
+                await setSearchTopStories(result)
+                setIsLoading(true)
+            })
             .catch(err => err)
     }
 
     const setSearchTopStories = result => {
         const { hits, page } = result
-    
         const oldHits = page !== 0 ? searchInfo.result.hits : []
-    
         const updatedHits = [...oldHits, ...hits]
     
         setSearchInfo({
@@ -77,49 +42,35 @@ const Lab = () => {
         })
     }
 
-   const onSearchChange = event => {
-        setSearchInfo({...searchInfo,searchTerm: event.target.value})
-    }
-
-    const onSearchSubmit = event => {
-        const { searchTerm } = searchInfo
-        fetchSearchTopStories(searchTerm)
-        event.preventDefault()
-    }
-
-    const  onDismiss = id => {
-        const isNotId = item => item.objectID !== id
-        const updatedHits = searchInfo.result.hits.filter(isNotId)
-        setSearchInfo({
-            result: { ...searchInfo.result, hits: updatedHits }
-        })
-    }
-
     const { searchTerm, result } = searchInfo
+
     const page = (result && result.page) || 0
+
         return (
             <div className="page">
                 <div className="interactions">
                     <Search
-                        value={searchTerm}
-                        onChange={onSearchChange}
-                        onSubmit={onSearchSubmit}
+                        searchInfoList={[searchInfo, setSearchInfo]}
+                        fetchSearchTopStories={fetchSearchTopStories}
                     >
                         Search
                     </Search>
                 </div>
+
                 <div className="articles">
-                    {result && (
+                    {isLoading ? result && (
                         <Table
                             list={result.hits}
-                            onDismiss={onDismiss}
+                            searchInfoList={[searchInfo, setSearchInfo]}
                         />
-                    )}
+                    )
+                    : <p>Loading...</p>
+                }
                 </div>
+
+
                 <footer>
-                    <Button onClick={() => fetchSearchTopStories(searchTerm, page + 1)}>
-                        More
-                    </Button>
+                    <Button onClick={() => fetchSearchTopStories(searchTerm, page + 1)}>More</Button>
                 </footer>
             </div>
         )
