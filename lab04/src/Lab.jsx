@@ -22,11 +22,9 @@ const Lab = () => {
         setIsLoading(false)
        await fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}`)
             .then(async(response) => await response.json())
-            .then(async result => {
-                await setSearchTopStories(result)
-                setIsLoading(true)
-            })
+            .then(async result => await setSearchTopStories(result))
             .catch(err => err)
+            .finally(() => setIsLoading(true))
     }
 
     const setSearchTopStories = result => {
