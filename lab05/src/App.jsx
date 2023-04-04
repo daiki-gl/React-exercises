@@ -1,9 +1,14 @@
-import Field from "./components/Field";
-import Button from "./components/Button";
-import { useReducer } from "react";
+import Field from './components/Field'
+import Button from './components/Button'
+import { useReducer } from 'react'
 
-
-import { CLEAR_FORM_VALUE, initialState, reducer, SET_FORM_VALUE, VALIDATION } from "./components/reducer";
+import {
+  CLEAR_FORM_VALUE,
+  initialState,
+  reducer,
+  SET_FORM_VALUE,
+  VALIDATION,
+} from './components/reducer'
 
 /**
  *
@@ -24,15 +29,18 @@ function App() {
 
   const handleChange = (e) => {
     const name = e.target.name.toLowerCase()
-      dispatch({type: SET_FORM_VALUE, payload: {...state, [name]: e.target.value}})
+    dispatch({
+      type: SET_FORM_VALUE,
+      payload: { ...state, [name]: e.target.value },
+    })
   }
 
   const handleSubmit = () => {
-    dispatch({type: VALIDATION})
+    dispatch({ type: VALIDATION })
   }
 
   const handleClear = () => {
-    dispatch({type: CLEAR_FORM_VALUE})
+    dispatch({ type: CLEAR_FORM_VALUE })
   }
 
   return (
@@ -40,17 +48,31 @@ function App() {
       <h1>React Lab 5</h1>
       <h1>Login</h1>
       <div className="Container">
-        <Field errorMsg={state.errorMsg.email} label="Email" value={state.email} onChange={handleChange} />
-        <Field errorMsg={state.errorMsg.password} label="Password" value={state.password} onChange={handleChange} />
+        <Field
+          errorMsg={state.errorMsg.email}
+          label="Email"
+          value={state.email}
+          onChange={handleChange}
+        />
+        <Field
+          errorMsg={state.errorMsg.password}
+          label="Password"
+          value={state.password}
+          onChange={handleChange}
+        />
 
         <div className="Buttons">
           <Button label="Clear" onClick={handleClear} />
           <div className="Spacer" />
-          <Button isFilled={state.isFilled} label="Login" onClick={handleSubmit}  />
+          <Button
+            isFilled={state.isFilled}
+            label="Login"
+            onClick={handleSubmit}
+          />
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

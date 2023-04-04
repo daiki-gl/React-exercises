@@ -16,6 +16,7 @@ export const initialState = {
 export const reducer = (state, action) => {
   switch (action.type) {
     case SET_FORM_VALUE:
+      console.log(action)
       return {
         ...state,
         email: action.payload.email,
